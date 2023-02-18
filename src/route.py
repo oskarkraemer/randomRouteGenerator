@@ -60,7 +60,7 @@ class Route:
         }
 
         headers = {
-            "Authorization": "5b3ce3597851110001cf6248aebc200dcca3492398979659f332af43",
+            "Authorization": "5b3ce3597851110001cf6248b813db0f732349eb8ad539782dfa1207",
             "Origin": "https://openrouteservice.org",
             "Referer": "https://openrouteservice.org/",
         }
@@ -68,7 +68,11 @@ class Route:
         response = requests.post(url, json=data, headers=headers)
         json_data = json.loads(response.text)
 
-        print(json_data)
+        #print(json_data)
+
+        if json_data["error"]["code"] == 2010:
+            print(json_data)
+            raise Exception("No route found. Try again with different parameters.")
 
         self.routing = json_data
 
@@ -76,8 +80,11 @@ class Route:
         self.points = self.__extract_corrected_points()
     
     def get_length(self):
-        """Returns the length of the route."""
+        """Returns the length of the route in metres."""
         if self.routing == {}:
             raise Exception("No routing data available. Call generate_routing() first.")
         
-        return self.routing["features"][0]["properties"]["summary"]["distance"]
+        try:
+            return self.routing["features"][0]["properties"]["summary"]["distance"] * 1000
+        except KeyError:
+            return -1
