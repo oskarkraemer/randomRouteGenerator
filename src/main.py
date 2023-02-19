@@ -22,11 +22,11 @@ def generate_route(origin, max_length, closed_route = True, max_point_amount=3):
     #I. Generate random coordinates and get nearest address
     while len(points) < max_point_amount:
         radius = max_length * ATCF / LENGTH_PER_POINT_RATIO
-        random_coordinate = Coordinate.randomize(origin, radius)
+
+        random_coordinate = origin.generate_on_street(radius)
+
         points.append(random_coordinate)
     
-    for point in points:
-        print(f"lat: {point.lat}, lon: {point.lon}")
     
     #add home to points
     points.append(origin)
@@ -35,11 +35,13 @@ def generate_route(origin, max_length, closed_route = True, max_point_amount=3):
     route = Route(points)
     route.sort_by_distance(origin)
 
+    for point in points:
+        print(point)
+
     try:
         route.generate_routing()
 
         length = route.get_length()
-        print(length)
         if length > max_length or length == -1:
             print("TOO LONG")
             print("RETRYING")
@@ -47,15 +49,14 @@ def generate_route(origin, max_length, closed_route = True, max_point_amount=3):
         
         
         return route
-    except:
-        print("NO ROUTE FOUND")
+    except Exception as e:
+        print("ERROR")
+        print(e)
         return generate_route(origin, max_length, closed_route, max_point_amount)
 
 
 def __dbg_gen_route():
-    p = generate_route(Coordinate(51.846812, 6.242033), 15000)
-    print("POINTS:")
-    #print(p.points)
+    p = generate_route(Coordinate(51.846812, 6.242033), 25000)
 
     print("API INFO:")
 
@@ -63,6 +64,6 @@ def __dbg_gen_route():
 
 
 #for i in range(230):
-#    print(Coordinate.randomize(Coordinate(51.846812, 6.242033), 15000))
+#    print(Coordinate(51.846812, 6.242033).generate_random(15000))
 
 __dbg_gen_route()

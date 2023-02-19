@@ -36,7 +36,8 @@ class Route:
         #convert points to tuple array
         p = []
         for point in self.points:
-            p.append((point.lon, point.lat))
+            p.append((float(point.lon), float(point.lat)))
+        
 
         #cunstruct avoid features array
         avoids = []
@@ -60,7 +61,7 @@ class Route:
         }
 
         headers = {
-            "Authorization": "5b3ce3597851110001cf6248b813db0f732349eb8ad539782dfa1207",
+            "Authorization": "5b3ce3597851110001cf6248c930a3f7066a4fe6a97d8934b390de7d",
             "Origin": "https://openrouteservice.org",
             "Referer": "https://openrouteservice.org/",
         }
@@ -68,11 +69,10 @@ class Route:
         response = requests.post(url, json=data, headers=headers)
         json_data = json.loads(response.text)
 
-        #print(json_data)
-
-        if json_data["error"]["code"] == 2010:
-            print(json_data)
-            raise Exception("No route found. Try again with different parameters.")
+        if "error" in json_data:
+            if json_data["error"]["code"] == 2010:
+                print(json_data)
+                raise Exception("No route found. Try again with different parameters.")
 
         self.routing = json_data
 

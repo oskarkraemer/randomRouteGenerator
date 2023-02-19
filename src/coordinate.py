@@ -4,6 +4,7 @@ import json
 import random
 import haversine
 import math
+import overpy
 
 class Coordinate:
     """A class to represent a coordinate."""
@@ -12,24 +13,87 @@ class Coordinate:
         self.lat = lat
         self.lon = lon
 
+        #Data for API caching
+        self.__overpass_cache = {}
+        self.__cache_radius = 0
+        self.__cache_cycle = False
+
     def __str__(self):
         return "" + str(self.lat) + " " + str(self.lon) + ""
+
+    def in_distance(self, distance, direction):
+        """Returns a coordinate at a given distance and direction from self."""
+        r = haversine.inverse_haversine((self.lat, self.lon), distance / 1000, direction)
+        return Coordinate(r[0], r[1])
     
-    @staticmethod
-    def randomize(origin, radius):
-        """Returns a random coordinate within a radius in metres of the origin."""
-        max_coord = haversine.inverse_haversine((origin.lat, origin.lon), radius / 1000, haversine.Direction.NORTH)
-        radius = max_coord[0] - origin.lat
+    def generate_random(self, radius):
+        """Returns a random coordinate within a radius in metres of self."""
+        max_coord = self.in_distance(radius, haversine.Direction.NORTH)
+        radius = max_coord.lat - self.lat
 
         r = radius * math.sqrt(random.random())
         theta = 2 * math.pi * random.random()
 
-        foundLatitude = r * math.cos(theta) + origin.lat
-        foundLongitude = r * math.sin(theta) * 2 + origin.lon
+        foundLatitude = r * math.cos(theta) + self.lat
+        foundLongitude = r * math.sin(theta) * 2 + self.lon
 
-        #print(math.cos(origin.lat))
+        #print(math.cos(self.lat))
 
         return Coordinate(foundLatitude, foundLongitude)
+    
+    def generate_on_street(self, radius, cycle = True):
+        """Returns a random coordinate on a street within a radius in metres of the origin."""
+        """Cycle is a boolean that determines if the coordinate should be reachable on a bicycle."""
+        """OPTIMIZE BY CACHING API RESPONSE AND USING FOR SAME RADIUS"""
+
+        #Check if valid API cache can be used
+        if self.__cache_radius == radius and self.__cache_cycle == cycle:
+            return random.choice(self.__overpass_cache)
+        
+        api = overpy.Overpass()
+
+        if cycle:
+            forbidden_highways = ["motorway", "trunk", "steps", "motorway_link", "trunk_link"]
+        else:
+            forbidden_highways = []
+        
+        #Calculate bounding box
+        no_coordinate = self.in_distance(radius, haversine.Direction.NORTHEAST)
+        sw_coordinate = self.in_distance(radius, haversine.Direction.SOUTHWEST)
+
+        bounding_box = (sw_coordinate.lat, sw_coordinate.lon, no_coordinate.lat, no_coordinate.lon)
+
+        query = 'way["highway"]'
+        for highway in forbidden_highways:
+            query += '["highway"!="{}"]'.format(highway)
+
+        query += '{};out body; >; out skel qt;'.format(bounding_box)
+
+        print(query)
+
+        result = api.query(query)
+
+    
+        #Store every way-coordinate in a list
+        candidates = []
+
+        for way in result.ways:
+            #print("Highway: %s" % way.tags.get("highway", "n/a"))
+            #print(f"Center: {way.center_lat}, {way.center_lon}")
+            nodes = way.get_nodes(resolve_missing=True)
+            for node in nodes:
+                #print("Node %s: lat=%f, lon=%f" % (node.id, node.lat, node.lon))
+                candidates.append(Coordinate(node.lat, node.lon))
+        
+
+        #Store result in cache
+        self.__overpass_cache = candidates
+        self.__cache_radius = radius
+        self.__cache_cycle = cycle
+        
+        #Select a random coordinate from the list
+        return random.choice(candidates)
+
     
     def distance_to(self, other):
         """Returns the distance in metres between this coordinate and another."""
