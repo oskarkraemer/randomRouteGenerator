@@ -9,6 +9,7 @@ class Route:
 
     def __init__(self, points):
         self.points = points
+        self.routing_points = []
         self.routing = {}
 
         self.ferries = False
@@ -77,7 +78,7 @@ class Route:
         self.routing = json_data
 
         #extract points in self.points
-        self.points = self.__extract_corrected_points()
+        self.routing_points = self.__extract_corrected_points()
     
     def get_length(self):
         """Returns the length of the route in metres."""
