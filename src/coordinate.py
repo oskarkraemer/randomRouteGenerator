@@ -44,7 +44,6 @@ class Coordinate:
     def generate_on_street(self, radius, cycle = True):
         """Returns a random coordinate on a street within a radius in metres of the origin."""
         """Cycle is a boolean that determines if the coordinate should be reachable on a bicycle."""
-        """OPTIMIZE BY CACHING API RESPONSE AND USING FOR SAME RADIUS"""
 
         #Check if valid API cache can be used
         if self.__cache_radius == radius and self.__cache_cycle == cycle:

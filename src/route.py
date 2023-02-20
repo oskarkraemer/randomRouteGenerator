@@ -28,11 +28,11 @@ class Route:
                 points.append(Coordinate(coord[1], coord[0]))
         return points
 
-    def generate_routing(self):
+    def generate_routing(self, api_key):
         """Generate a route from a list of points. Query the OpenRouteService API and store the response in self.data."""
 
         #send post request to url and parse json
-        url = "https://api.openrouteservice.org/v2/pdirections/cycling-regular/geojson"
+        url = "https://api.openrouteservice.org/v2/directions/cycling-regular/geojson"
 
         #convert points to tuple array
         p = []
@@ -62,18 +62,26 @@ class Route:
         }
 
         headers = {
-            "Authorization": "5b3ce3597851110001cf6248c930a3f7066a4fe6a97d8934b390de7d",
-            "Origin": "https://openrouteservice.org",
-            "Referer": "https://openrouteservice.org/",
+            "Authorization": api_key
         }
 
         response = requests.post(url, json=data, headers=headers)
         json_data = json.loads(response.text)
 
+        #check for errors
         if "error" in json_data:
-            if json_data["error"]["code"] == 2010:
-                print(json_data)
-                raise Exception("No route found. Try again with different parameters.")
+            try:
+                if json_data["error"] == "Authorization field missing":
+                    raise Exception("No API key provided. Please provide a valid API key.")
+                
+                if json_data["error"] == "Access to this API has been disallowed":
+                    raise Exception("The API key provided is invalid. Please provide a valid API key.")
+
+                if json_data["error"]["code"] == 2010:
+                    raise Exception("No route found. Try again with different parameters.")
+            
+            except TypeError:
+                raise Exception("Error while generating routing: " + json.dumps(json_data))
 
         self.routing = json_data
 
