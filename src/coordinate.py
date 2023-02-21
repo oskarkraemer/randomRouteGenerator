@@ -70,7 +70,26 @@ class Coordinate:
 
         print(query)
 
-        result = api.query(query)
+        #Try to query the Overpass API
+        result = None
+        success = False
+        urls = ["http://lz4.overpass-api.de/api/interpreter", 
+            "http://overpass.kumi.systems/api/interpreter", 
+            "http://overpass.openstreetmap.fr/api/interpreter", 
+            "http://overpass.nchc.org.tw/api/interpreter", 
+            "http://overpass-api.de/api/interpreter", 
+            "http://overpass.openstreetmap.ru/api/interpreter"
+        ]
+        
+        for url in urls:
+            try:
+                api.url = url
+                result = api.query(query)
+                success = True
+                break
+            except Exception as e:
+                print(e)
+                print("Failed to query Overpass API at " + url)
 
     
         #Store every way-coordinate in a list

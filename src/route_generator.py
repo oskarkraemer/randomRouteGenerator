@@ -17,29 +17,34 @@ class RouteGenerator:
         self.api_key = ""
         self.routing_profile = "cycling-regular"
 
-        #(As the crow flies) Factor to reduce the radius per coordinate [maybe deprecated]
-        self.__ATCF = 0.25
+        self.route_mode = self.ROUTE_MODE.START_END_ORIGIN
+        self.point_amount = 4
+        self.avoids = ["ferries", "steps"]
+
+        """ A constant to change the radius of each generated coordinate. """
+        """ The higher the value, the closer the points to the origin."""
+        self.radius_factor = 0.25
     
     def read_api_key(self, path):
         """ Reads the API key from a file. """
         with open(path, "r") as f:
             self.api_key = f.read()
     
-    def generate_route(self, origin, max_length, route_mode = ROUTE_MODE.START_END_ORIGIN, point_amount = 3):
+    def generate_route(self, origin, max_length):
         """ Generates a random route with an origin point and a maximum length in metres."""
         points = []
 
         #I. Generate random coordinates and get nearest address
-        while len(points) < point_amount:
-            radius = max_length / (point_amount + 2)
+        while len(points) < self.point_amount:
+            radius = max_length / (self.point_amount + 3)
 
-            random_coordinate = origin.generate_on_street(radius)
+            random_coordinate = origin.generate_on_street(radius, cycle = "cycling" in self.routing_profile)
 
             points.append(random_coordinate)
         
 
         #II. Add home to points if mode is START_ORIGIN or START_END_ORIGIN
-        if route_mode == self.ROUTE_MODE.START_ORIGIN or route_mode == self.ROUTE_MODE.START_END_ORIGIN:
+        if self.route_mode == self.ROUTE_MODE.START_ORIGIN or self.route_mode == self.ROUTE_MODE.START_END_ORIGIN:
             points.append(origin)
 
         #III. Sort points by distance to origin
@@ -48,16 +53,16 @@ class RouteGenerator:
 
         
         #IV. Add home to points if mode is END_ORIGIN or START_END_ORIGIN
-        if route_mode == self.ROUTE_MODE.END_ORIGIN or route_mode == self.ROUTE_MODE.START_END_ORIGIN:
+        if self.route_mode == self.ROUTE_MODE.END_ORIGIN or self.route_mode == self.ROUTE_MODE.START_END_ORIGIN:
             route.points.append(origin)
 
         #V. Generate routing
-        route.generate_routing(self.api_key, self.routing_profile)
+        route.generate_routing(self.api_key, self.routing_profile, self.avoids)
 
         length = route.get_length()
         if length > max_length or length == -1:
             print("TOO LONG")
             print("RETRYING")
-            return self.generate_route(origin, max_length, route_mode, point_amount)
+            return self.generate_route(origin, max_length)
                 
         return route

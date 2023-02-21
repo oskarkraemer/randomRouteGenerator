@@ -12,10 +12,6 @@ class Route:
         self.points = points
         self.routing_points = []
         self.routing = {}
-
-        self.ferries = False
-        self.steps = False
-        self.fords = True
     
     def sort_by_distance(self, point):
         """Sorts points by distance to a given point."""
@@ -29,7 +25,7 @@ class Route:
                 points.append(Coordinate(coord[1], coord[0]))
         return points
 
-    def generate_routing(self, api_key, routing_profile):
+    def generate_routing(self, api_key, routing_profile, avoids = ["ferries", "steps"]):
         """Generate a route from a list of points. Query the OpenRouteService API and store the response in self.data."""
 
         #send post request to url and parse json
@@ -39,17 +35,6 @@ class Route:
         p = []
         for point in self.points:
             p.append((float(point.lon), float(point.lat)))
-        
-
-        #cunstruct avoid features array
-        avoids = []
-        if not self.ferries:
-            avoids.append("ferries")
-        if not self.steps:
-            avoids.append("steps")
-        if not self.fords:
-            avoids.append("fords") 
-        
 
         data = {
             "coordinates": p,
@@ -70,7 +55,7 @@ class Route:
         json_data = json.loads(response.text)
 
         #check for errors
-        if "error" in json_data:
+        if not ("features" in json_data):
             try:
                 if json_data["error"] == "Authorization field missing":
                     raise Exception("No API key provided. Please provide a valid API key.")
