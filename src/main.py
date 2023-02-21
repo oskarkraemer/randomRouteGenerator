@@ -23,7 +23,8 @@ def __dbg_gen_route():
 
     print("API INFO:")
 
-    print(p.routing["features"][0]["properties"]["summary"])
+    print(f"Length: {p.get_length()} | Duration: {p.get_duration()} | Elevation: {json.dumps(p.get_elevation())}")
+    print(p.get_way_info())
     
     for x in p.points:
         print(x)

@@ -88,6 +88,45 @@ class Route:
         except KeyError:
             return -1
     
+    def get_duration(self):
+        """Returns the duration of the route in seconds."""
+        if self.routing == {}:
+            raise Exception("No routing data available. Call generate_routing() first.")
+        
+        try:
+            return self.routing["features"][0]["properties"]["summary"]["duration"]
+        except KeyError:
+            return -1
+    
+    def get_elevation(self):
+        """Returns the elevation of the route in metres."""
+        if self.routing == {}:
+            raise Exception("No routing data available. Call generate_routing() first.")
+        
+        try:
+            ascent = self.routing["features"][0]["properties"]["ascent"]
+            descent = self.routing["features"][0]["properties"]["descent"]
+
+            r = {
+                "ascent": ascent,
+                "descent": descent,
+                "elevation_gain": ascent - descent
+            }
+
+            return r
+        except KeyError:
+            return {}
+
+    def get_way_info(self):
+        """Returns the way info of the route."""
+        if self.routing == {}:
+            raise Exception("No routing data available. Call generate_routing() first.")
+        
+        try:
+            return self.routing["features"][0]["properties"]["extras"]
+        except KeyError:
+            return {}
+    
     def generate_gpx_file(self, filename):
         """Generates a GPX file from the routing data."""
         if self.routing == {}:
