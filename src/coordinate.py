@@ -74,11 +74,11 @@ class Coordinate:
         result = None
         success = False
         urls = ["http://lz4.overpass-api.de/api/interpreter", 
-            "http://overpass.kumi.systems/api/interpreter", 
-            "http://overpass.openstreetmap.fr/api/interpreter", 
-            "http://overpass.nchc.org.tw/api/interpreter", 
-            "http://overpass-api.de/api/interpreter", 
-            "http://overpass.openstreetmap.ru/api/interpreter"
+            "http://z.overpass-api.de/api/interpreter", 
+            "http://maps.mail.ru/osm/tools/overpass/api/interpreter", 
+            "http://overpass.openstreetmap.ru/api/interpreter", 
+            "http://overpass.osm.ch/api/interpreter", 
+            "http://overpass.kumi.systems/api/interpreter"
         ]
         
         for url in urls:

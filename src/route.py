@@ -54,6 +54,8 @@ class Route:
         response = requests.post(url, json=data, headers=headers)
         json_data = json.loads(response.text)
 
+        print(json_data)
+
         #check for errors
         if not ("features" in json_data):
             try:
@@ -67,7 +69,9 @@ class Route:
                     raise Exception("No route found. Try again with different parameters.")
             
             except TypeError:
-                raise Exception("Error while generating routing: " + json.dumps(json_data))
+                pass
+            
+            raise Exception("Error while generating routing: " + json.dumps(json_data))
 
         self.routing = json_data
 
