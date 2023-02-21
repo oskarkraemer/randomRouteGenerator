@@ -19,7 +19,7 @@ class Coordinate:
         self.__cache_cycle = False
 
     def __str__(self):
-        return "" + str(self.lat) + " " + str(self.lon) + ""
+        return str(self.lat) + ", " + str(self.lon)
 
     def in_distance(self, distance, direction):
         """Returns a coordinate at a given distance and direction from self."""

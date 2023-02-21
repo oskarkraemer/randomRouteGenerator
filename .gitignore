@@ -154,3 +154,6 @@ cython_debug/
 #Home Coordinate File
 home.txt
 ors_api.key
+
+#Generated GPX Files
+*.gpx

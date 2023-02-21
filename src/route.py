@@ -1,6 +1,7 @@
 import math
 import json
 import requests
+import gpxpy
 
 from coordinate import Coordinate
 
@@ -28,11 +29,11 @@ class Route:
                 points.append(Coordinate(coord[1], coord[0]))
         return points
 
-    def generate_routing(self, api_key):
+    def generate_routing(self, api_key, routing_profile):
         """Generate a route from a list of points. Query the OpenRouteService API and store the response in self.data."""
 
         #send post request to url and parse json
-        url = "https://api.openrouteservice.org/v2/directions/cycling-regular/geojson"
+        url = f"https://api.openrouteservice.org/v2/directions/{routing_profile}/geojson"
 
         #convert points to tuple array
         p = []
@@ -97,3 +98,26 @@ class Route:
             return self.routing["features"][0]["properties"]["summary"]["distance"] * 1000
         except KeyError:
             return -1
+    
+    def generate_gpx_file(self, filename):
+        """Generates a GPX file from the routing data."""
+        if self.routing == {}:
+            raise Exception("No routing data available. Call generate_routing() first.")
+        
+        gpx = gpxpy.gpx.GPX()
+
+        #create track
+        gpx_track = gpxpy.gpx.GPXTrack()
+        gpx.tracks.append(gpx_track)
+
+        #create segment
+        gpx_segment = gpxpy.gpx.GPXTrackSegment()
+        gpx_track.segments.append(gpx_segment)
+
+        #add points
+        for point in self.routing_points:
+            gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(point.lat, point.lon))
+        
+        #write to file
+        with open(filename, "w") as f:
+            f.write(gpx.to_xml())

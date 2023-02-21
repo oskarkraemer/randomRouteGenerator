@@ -10,7 +10,9 @@ from coordinate import Coordinate
 
 def __dbg_gen_route():
     generator = RouteGenerator()
-    generator.api_key = ""
+    #generator.api_key = ""
+    generator.read_api_key("ors_api.key")
+    generator.routing_profile = "cycling-mountain"
 
     p = generator.generate_route(Coordinate(51.846812, 6.242033), 25000)
 
@@ -21,6 +23,6 @@ def __dbg_gen_route():
     for x in p.points:
         print(x)
 
-
+    p.generate_gpx_file(filename="out.gpx")
 
 __dbg_gen_route()

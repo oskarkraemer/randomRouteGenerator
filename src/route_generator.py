@@ -15,9 +15,15 @@ class RouteGenerator:
 
     def __init__(self):
         self.api_key = ""
+        self.routing_profile = "cycling-regular"
 
         #(As the crow flies) Factor to reduce the radius per coordinate [maybe deprecated]
         self.__ATCF = 0.25
+    
+    def read_api_key(self, path):
+        """ Reads the API key from a file. """
+        with open(path, "r") as f:
+            self.api_key = f.read()
     
     def generate_route(self, origin, max_length, route_mode = ROUTE_MODE.START_END_ORIGIN, point_amount = 3):
         """ Generates a random route with an origin point and a maximum length in metres."""
@@ -46,7 +52,7 @@ class RouteGenerator:
             route.points.append(origin)
 
         #V. Generate routing
-        route.generate_routing(self.api_key)
+        route.generate_routing(self.api_key, self.routing_profile)
 
         length = route.get_length()
         if length > max_length or length == -1:
