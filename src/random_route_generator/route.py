@@ -54,8 +54,6 @@ class Route:
         response = requests.post(url, json=data, headers=headers)
         json_data = json.loads(response.text)
 
-        print(json_data)
-
         #check for errors
         if not ("features" in json_data):
             try:

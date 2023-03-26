@@ -73,8 +73,8 @@ class Coordinate:
         #Try to query the Overpass API
         result = None
         success = False
-        urls = ["http://lz4.overpass-api.de/api/interpreter", 
-            "http://z.overpass-api.de/api/interpreter", 
+        urls = ["http://z.overpass-api.de/api/interpreter",
+            "http://lz4.overpass-api.de/api/interpreter", 
             "http://maps.mail.ru/osm/tools/overpass/api/interpreter", 
             "http://overpass.openstreetmap.ru/api/interpreter", 
             "http://overpass.osm.ch/api/interpreter", 

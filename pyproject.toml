@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "random_route_generator"
+version = "0.0.1"
+authors = [
+  { name="Oskar Kraemer" },
+]
+description = "A package to generate a random route."
+readme = "README.md"
+license = "GPL-3.0-or-later"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/oskarkraemer/randomRouteGenerator"
+
+[tool.hatch.build]
+include = [
+    "*.py"
+]
