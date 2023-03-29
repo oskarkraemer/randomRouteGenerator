@@ -1,5 +1,5 @@
-from route_generator import RouteGenerator
-from coordinate import Coordinate
+from randomRouteGenerator.route_generator import RouteGenerator
+from randomRouteGenerator.coordinate import Coordinate
 
 def __generate():
     generator = RouteGenerator()
@@ -8,7 +8,7 @@ def __generate():
     generator.api_key = ""
 
     #OR read the API key from a file
-    generator.read_api_key("ors_api.key")
+    #generator.read_api_key("ors_api.key")
 
     #What type of route generation should be used? (See README)
     generator.routing_profile = "cycling-mountain"

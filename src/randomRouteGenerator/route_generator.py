@@ -1,5 +1,5 @@
-from coordinate import Coordinate
-from route import Route
+from . import coordinate
+from . import route
 
 class RouteGenerator:
     """ Class to generate a random route """
@@ -48,21 +48,21 @@ class RouteGenerator:
             points.append(origin)
 
         #III. Sort points by distance to origin
-        route = Route(points)
-        route.sort_by_distance(origin)
+        rt = route.Route(points)
+        rt.sort_by_distance(origin)
 
         
         #IV. Add home to points if mode is END_ORIGIN or START_END_ORIGIN
         if self.route_mode == self.ROUTE_MODE.END_ORIGIN or self.route_mode == self.ROUTE_MODE.START_END_ORIGIN:
-            route.points.append(origin)
+            rt.points.append(origin)
 
         #V. Generate routing
-        route.generate_routing(self.api_key, self.routing_profile, self.avoids)
+        rt.generate_routing(self.api_key, self.routing_profile, self.avoids)
 
-        length = route.get_length()
+        length = rt.get_length()
         if length > max_length or length == -1:
             print("TOO LONG")
             print("RETRYING")
             return self.generate_route(origin, max_length)
                 
-        return route
+        return rt

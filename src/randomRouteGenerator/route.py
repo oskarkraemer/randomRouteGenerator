@@ -3,7 +3,7 @@ import json
 import requests
 import gpxpy
 
-from coordinate import Coordinate
+from . import coordinate
 
 class Route:
     """Class for interacting with the OpenRouteService API and handling the response."""
@@ -22,7 +22,7 @@ class Route:
         points = []
         for feature in self.routing["features"]:
             for coord in feature["geometry"]["coordinates"]:
-                points.append(Coordinate(coord[1], coord[0]))
+                points.append(coordinate.Coordinate(coord[1], coord[0]))
         return points
 
     def generate_routing(self, api_key, routing_profile, avoids = ["ferries", "steps"]):
