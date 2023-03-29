@@ -6,10 +6,10 @@ Utilizes the openrouteservice API to generate the routing and the Overpass API f
 
 ## Installation
 
-Random-Route-Generator releases are available as wheel packages for macOS, Windows and Linux on PyPI. Install it using `pip`:
+Random-Route-Generator releases are available as wheel packages for macOS, Windows and Linux on [PyPI](https://pypi.org/project/random-route-generator/). Install it using `pip`:
 
 ```bash
-python -m pip install -U random-route-generator
+pip install random-route-generator
 ```
 
 ## Example
