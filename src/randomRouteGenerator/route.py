@@ -25,7 +25,7 @@ class Route:
                 points.append(coordinate.Coordinate(coord[1], coord[0]))
         return points
 
-    def generate_routing(self, api_key, routing_profile, avoids = ["ferries", "steps"]):
+    def generate_routing(self, api_key, routing_profile, avoids = ["ferries", "steps"]) -> bool:
         """Generate a route from a list of points. Query the OpenRouteService API and store the response in self.data."""
 
         #send post request to url and parse json
@@ -65,6 +65,9 @@ class Route:
 
                 if json_data["error"]["code"] == 2010:
                     raise Exception("No route found. Try again with different parameters.")
+                
+                if json_data["error"]["code"] == 2009:
+                    return self.generate_routing(api_key, routing_profile, avoids)
             
             except TypeError:
                 pass
@@ -75,6 +78,8 @@ class Route:
 
         #extract points in self.points
         self.routing_points = self.__extract_corrected_points()
+
+        return True
     
     def get_length(self):
         """Returns the length of the route in metres."""
