@@ -1,4 +1,8 @@
-# Random-Route-Generator
+<p align="center">
+  <a href="">
+    <img src="banner.png" alt="Repository Banner">
+  </a>
+</p>
 
 A Python package to generate a random route with a specified length.
 
@@ -67,6 +71,14 @@ for x in p.points:
 p.generate_gpx_file(filename="out.gpx")
 ```
 
+
+## Profiles
+* driving-car (Regular car routing)
+* driving-hgv (Routing for heavy-trucks)
+* cycling-regular (Routing for regular cycling)
+* cycling-road (Routing for road bikes)
+* cycling-mountain (Routing for mountain bikes, prefers offroad tracks)
+* cycling-electric (Routing for E-bikes)
 
 ## Credits
 

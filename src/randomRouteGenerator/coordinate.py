@@ -68,7 +68,7 @@ class Coordinate:
 
         query += '{};out body; >; out skel qt;'.format(bounding_box)
 
-        print(query)
+        #print(query)
 
         #Try to query the Overpass API
         result = None

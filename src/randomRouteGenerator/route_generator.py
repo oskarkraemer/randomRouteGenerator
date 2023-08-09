@@ -22,7 +22,7 @@ class RouteGenerator:
         self.avoids = ["ferries", "steps"]
 
         self.normal_factor = 4
-        self.startend_factor = 5
+        self.startend_factor = 7
     
     def read_api_key(self, path):
         """ Reads the API key from a file. """
@@ -35,10 +35,10 @@ class RouteGenerator:
 
         #I. Generate random coordinates and get nearest address
         while len(points) < self.point_amount:
-            if self.route_mode == self.route_mode == self.ROUTE_MODE.START_END_ORIGIN:
-                radius = max_length / (self.point_amount + self.normal_factor)
-            else:
+            if self.route_mode == self.ROUTE_MODE.START_END_ORIGIN:
                 radius = max_length / (self.point_amount + self.startend_factor)
+            else:
+                radius = max_length / (self.point_amount + self.normal_factor)
 
             random_coordinate = origin.generate_on_street(radius, cycle = "cycling" in self.routing_profile)
 
@@ -63,7 +63,7 @@ class RouteGenerator:
 
         length = rt.get_length()
         if length > max_length or length == -1:
-            print("Route too long, retrying...: " + str(length) + "m")
+            #print("Route too long, retrying...: " + str(length) + "m")
             return self.generate_route(origin, max_length)
                 
         return rt

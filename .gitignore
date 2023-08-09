@@ -157,3 +157,5 @@ ors_api.key
 
 #Generated GPX Files
 *.gpx
+
+*.whl
